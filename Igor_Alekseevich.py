@@ -14,14 +14,13 @@ keywords = ['@kurakin_igor_bot'] + cmds + list(map(lambda x: x + '@kurakin_igor_
 token = '5919598868:AAGkH6FcvNHnzq95Ddqm3mkRfoAEW_w7SIQ'
 base_url = 'https://api.telegram.org/bot'
 proxy_url = 'http://proxy.com:8585'
-# Настройка Webhook
-WEBHOOK_HOST = 'https://0081-2a02-2698-242b-230-35ff-13c7-ae9e-fd70.ngrok-free.app' # -> Адрес сервера
-WEBHOOK_PATH = ''# -> Путь до api, где слушает бот
-WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}' # -> URL на который будут приниматься запросы
+WEBHOOK_HOST = 'https://51d4-2a02-2698-242b-230-d1cd-a278-17b7-bb9.ngrok-free.app'
+WEBHOOK_PATH = ''
+WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 
 # Настройка web-сервера
-WEBAPP_HOST = '127.0.0.1' # -> хост нашего приложения, оставляем локальным
-WEBAPP_PORT = 5000 # -> port на котором работает наше приложение
+WEBAPP_HOST = '127.0.0.1'
+WEBAPP_PORT = 5000
 
 bot = Bot(token = token)
 dp = Dispatcher(bot)
