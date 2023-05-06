@@ -142,7 +142,7 @@ async def dick(message: types.Message):
     if txt in keywords:
         flg = False
         flg2 = False
-        await message.reply('Напиши мне сообщиние, а я его ХУЕФИЦИРУЮ!\nПример ввода:\n/dickificky Привет мир!\nПример вывода:\nХуепривет Хуемир!')
+        await message.reply('Напиши мне сообщиние, а я его ХУЕФИЦИРУЮ!\nПример ввода:\n/dickify Привет мир!\nПример вывода:\nХуепривет Хуемир!')
     elif len(txt) > 1000:
         flg = False
     elif flg:
@@ -156,14 +156,19 @@ async def dick(message: types.Message):
                     if j in abc:
                         flg = False
                         break
+                if len(word) == 1:
+                    ans += [word.upper()]
+                elif len(word) <= 3:
+                    ans += [word[0].upper()+word[1:].lower()]
+                else:
+                    for j in range(len(word)):
+                        if word[j] not in even:
+                            if len(word)-j >=3:
+                                ans += ['Хуе' + word[j:].lower()]
+                            else:
+                                ans += [word.lower()]
+                            break
 
-                for j in range(len(word)):
-                    if word[j] not in even:
-                        if len(word)-j >=3:
-                            ans += ['Хуе' + word[j:].lower()]
-                        else:
-                            ans += [word.lower()]
-                        break
     if flg:
         await message.reply(' '.join(ans))
     elif flg2:
