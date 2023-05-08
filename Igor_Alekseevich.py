@@ -4,6 +4,7 @@ from aiogram.utils import executor
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.utils.executor import start_webhook
 import json
+from sympy import *
 abc = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
 ops = '+-/*'
 nums = '1234567890'
@@ -49,7 +50,7 @@ async def begin(message: types.Message):
 @dp.message_handler(commands = 'help')
 async def tell_funcs(message: types.Message):
     await bot.send_message(message.chat.id, \
-                           'Я могу отвечать на такие команды:\n' + '\n'.join(cmds))
+                           'Я могу отвечать на такие команды:\n' + '\n '.join(cmds))
 @dp.message_handler(commands = 'lecture')
 async def lecture(message: types.Message):
         #await bot.send_message(message.chat.id, read())
@@ -59,80 +60,58 @@ async def bully(message: types.Message):
         #await bot.send_message(message.chat.id, f'{message.from_user.first_name} {outrage()}')
         await message.reply(f'{message.from_user.first_name} {outrage()}')
 @dp.message_handler(commands = 'solve')
-async def solve(message: types.Message):
+async def equations(message: types.Message):
     if message.text == '/solve' or message.text == '/solve@test_n0_bot':
-
-        await message.reply('Я решу твою задачу!\n\
-Введи формулу из 3 различных переменных, а затем \
-через запятую введи 2 переменые и их значения из \
-правой части уравнения, а я мгновенно посчитаю значние третьей.\n\
-Пример ввода:\n\
-/solve I = U / R, U = 120, R = 30\n\
-Пример вывода:\n\
-4')
+        await message.reply('Я решу твою задачу! \n' +
+            'Введи какое-нибудь уравение, а я найду все его комплексные корни! \n' +
+            'Примеры ввода: \n' +
+            '/solve x**2 - 5*x + 6 = 0 \n' +
+            '/solve tan(x*pi) = 3**1/2 \n' +
+            '/solve x**2 >= 1 \n' +
+            '/solve log(x,E) = 15.154262241479259'
+            )
     else:
-        txt = message.text[6:]
-        if bot_name in txt:
-            txt = txt[12:]
-        d = {}
-        op = None
-        to_fill = None
-        value = None
-        i = 0
-        first = None
-        second = None
-        solved = False
 
         try:
-            while i < len(txt):
-
-                if txt[i] != ' ' and txt[i] != '=':
-
-                    if txt[i] in abc:
-                        if d.get(txt[i],-1) == -1:
-                            d[txt[i]] = 0
+            flg = 0
+            txt = message.text.split()
+            while txt[0] in keywords:
+                txt = txt[1:]
+            txt = ' '.join(txt)
+            if '>' in txt or '<' in txt:
+                try:
+                    solvation = solve(txt)
+                    if solvation == True:
+                        await message.reply('Неравенство верно при всех действительных значениях аргумента')
+                    elif solvation == False:
+                        await message.reply('Неравенство неверно при всех действительных значениях аргумента')
+                    else:
+                        await message.reply('Неравенство верно при таких значениях аргумента: \n' + str(solvation))
+                    flg = 1
+                except:
+                    pass
+            ans = []
+            eq = txt.split('=')
+            solvation = solve(eq[0] + '-(' + eq[1] + ')')
+            if len(solvation) == 0:
+                await message.reply('Уравнение не имеет корней на множестве комплексных чисел')
+            else:
+                for answer in solvation:
+                    try:
+                        if float(answer) != answer:
+                            ans += [str(answer) + ' => ' + str(round(float(answer),3))]
                         else:
-                            if not first:
-                                first = txt[i]
-                            else:
-                                second = txt[i]
-                            to_fill = txt[i]
-                    elif txt[i] in ops:
-                        op = txt[i]
-                    elif txt[i] in nums:
-                        if value:
-                            value = value*10 + int(txt[i])
-                        else:
-                            value = int(txt[i])
-                    elif value and to_fill:
-                        d[to_fill] = value
-                        value = None
-                        to_fill = None
-
-                i += 1
-            if value and to_fill:
-                d[to_fill] = value
-            if op and first and second:
-                if op == '+':
-                    await message.reply(f'{d[first]+d[second]}')
-                    solved = 1
-                if op == '-':
-                    await message.reply(f'{d[first]-d[second]}')
-                    solved = 1
-                if op == '*':
-                    await message.reply(f'{d[first]*d[second]}')
-                    solved = 1
-                if op == '/':
-                    await message.reply(f'{d[first]/d[second]}')
-                    solved = 1
-            if not solved:
-                await message.reply('Неверный формат ввода. \
-Попробуй еще раз')
-        except ZeroDivisionError:
-            await message.reply('Я не делю на ноль')
+                            ans += [str(answer)]
+                    except:
+                        ans += [str(answer)]
+                await message.reply('Я нашёл следующие решения: \n' + '\n '.join(ans))
+        except NotImplementedError:
+            await message.reply('Сам решай свою поеботу')
         except:
-            await message.reply('Неверный формат ввода. \
-Попробуй еще раз')
+            if not flg:
+                await message.reply('Некорректный ввод')
+
+
 @dp.message_handler(commands = 'dickify')
 async def dick(message: types.Message):
     txt = message.text
